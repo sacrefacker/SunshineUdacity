@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".FragmentForecast">
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/action_refresh_label"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_showmap"
+        android:title="@string/action_showmap_label"
+        app:showAsAction="never" />
+</menu>

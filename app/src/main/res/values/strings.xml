@@ -1,0 +1,29 @@
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name">MySunshine</string>
+
+    <string name="action_settings_label">Settings</string>
+    <string name="action_refresh_label">Refresh</string>
+    <string name="action_showmap_label">Show location on map</string>
+    <string name="chooser_showmap_label">Launch Maps</string>
+    <string name="action_share_label">Share</string>
+    <string name="chooser_share_label">Launch Maps</string>
+
+    <string name="title_activity_detail">Detail View</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_location_label">Location</string>
+    <string name="pref_location_key" translatable="false">location</string>
+    <string name="pref_default_location" translatable="false">Saint_Petersburg</string>
+    <string name="pref_units_key">units</string>
+    <string name="pref_units_metric">metric</string>
+    <string name="pref_units_imperial">imperial</string>
+
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+
+    <string name="format_temperature"><xliff:g id="temp">%1.0f</xliff:g>\u00B0</string>
+    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g></string>
+    <string name="format_wind">Wind: <xliff:g id="wind">%1.0f</xliff:g> kmh</string>
+    <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> kPa</string>
+
+</resources>
