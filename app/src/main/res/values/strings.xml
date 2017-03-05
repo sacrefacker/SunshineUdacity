@@ -1,4 +1,4 @@
-<resources xmlns:xliff="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">MySunshine</string>
 
     <string name="action_settings_label">Settings</string>
@@ -21,9 +21,9 @@
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
 
-    <string name="format_temperature"><xliff:g id="temp">%1.0f</xliff:g>\u00B0</string>
-    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g></string>
-    <string name="format_wind">Wind: <xliff:g id="wind">%1.0f</xliff:g> kmh</string>
-    <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> kPa</string>
+    <string name="format_temperature">%1.0f\u00B0</string>
+    <string name="format_humidity">Humidity: %1.0f%%</string>
+    <string name="format_wind">Wind: %1$1.0f km/h %2$s</string>
+    <string name="format_pressure">Pressure: %1.0f hPa</string>
 
 </resources>

@@ -15,43 +15,45 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.al.mysunshine.data.WeatherContract;
 
-public class FragmentDetail extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = FragmentDetail.class.getSimpleName();
-    public static final String HASHTAG = " #MySunshine";
-    private static final int DETAIL_LOADER = 1;
-
-    private ShareActionProvider mShareActionProvider;
-    private String mForecast;
-
-    private static final String[] DETAIL_COLUMNS = {
-            WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
-            WeatherContract.WeatherEntry.COLUMN_DATE,
-            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
-            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
-            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
-    };
-
-    static final int COLUMN_WEATHER_ID = 0;
-    static final int COLUMN_DATE = 1;
-    static final int COLUMN_SHORT_DESC = 2;
-    static final int COLUMN_MAX_TEMP = 3;
-    static final int COLUMN_MIN_TEMP = 4;
-    static final int COLUMN_HUMIDITY = 5;
-    static final int COLUMN_WIND_SPEED = 5;
-    static final int COLUMN_PRESSURE = 5;
+public class FragmentDetail extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+{
+// LIFECYCLE
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
+        mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        mWeatherView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
+        mMaxView = (TextView) rootView.findViewById(R.id.detail_high_textview);
+        mMinView = (TextView) rootView.findViewById(R.id.detail_low_textview);
+        mHumidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+        mWindView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+        mPressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+// MENU
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -66,27 +68,7 @@ public class FragmentDetail extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
-    private Intent createShareIntent() {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        //cool stuff:
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast.concat(HASHTAG));
-        return shareIntent;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_detail, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
-    }
+// LOADER
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -119,28 +101,22 @@ public class FragmentDetail extends Fragment implements LoaderManager.LoaderCall
                 .getLong(COLUMN_MIN_TEMP), true);
         String humidity = Utility.formatHumidity(getContext(), cursor
                 .getLong(COLUMN_HUMIDITY));
-        String wind = Utility.formatWind(getContext(), cursor
-                .getLong(COLUMN_WIND_SPEED));
+        String wind = Utility.getFormattedWind(getContext(), cursor
+                .getLong(COLUMN_WIND_SPEED), cursor.getLong(COLUMN_WIND_DEGREES));
         String pressure = Utility.formatPressure(getContext(), cursor
                 .getLong(COLUMN_PRESSURE));
 
         //for sharing
         mForecast = String.format("%s - %s : %s/%s", date, weather, maxTemp, minTemp);
 
-        TextView dateView = (TextView) getView().findViewById(R.id.detail_date_textview);
-        dateView.setText(date);
-        TextView weatherView = (TextView) getView().findViewById(R.id.detail_forecast_textview);
-        weatherView.setText(weather);
-        TextView maxView = (TextView) getView().findViewById(R.id.detail_high_textview);
-        maxView.setText(maxTemp);
-        TextView minView = (TextView) getView().findViewById(R.id.detail_low_textview);
-        minView.setText(minTemp);
-        TextView humidityView = (TextView) getView().findViewById(R.id.detail_humidity_textview);
-        humidityView.setText(humidity);
-        TextView windView = (TextView) getView().findViewById(R.id.detail_wind_textview);
-        windView.setText(wind);
-        TextView pressureView = (TextView) getView().findViewById(R.id.detail_pressure_textview);
-        pressureView.setText(pressure);
+        mIconView.setImageResource(android.R.drawable.ic_dialog_info);
+        mDateView.setText(date);
+        mWeatherView.setText(weather);
+        mMaxView.setText(maxTemp);
+        mMinView.setText(minTemp);
+        mHumidityView.setText(humidity);
+        mWindView.setText(wind);
+        mPressureView.setText(pressure);
 
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
@@ -151,4 +127,68 @@ public class FragmentDetail extends Fragment implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
+
+// PRIVATE
+
+    private Intent createShareIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        //cool stuff:
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast.concat(HASHTAG));
+        return shareIntent;
+    }
+
+// CONSTANTS
+
+    private static final String TAG = FragmentDetail.class.getSimpleName();
+
+    private static final String HASHTAG = " #MySunshine";
+    private static final int DETAIL_LOADER = 1;
+
+    // Adapter
+
+    private static final String[] DETAIL_COLUMNS = {
+            WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            // This works because the WeatherProvider returns location data joined with
+            // weather data, even though they're stored in two different tables.
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
+    };
+
+    static final int COLUMN_WEATHER_ID = 0;
+    static final int COLUMN_DATE = 1;
+    static final int COLUMN_SHORT_DESC = 2;
+    static final int COLUMN_MAX_TEMP = 3;
+    static final int COLUMN_MIN_TEMP = 4;
+    static final int COLUMN_HUMIDITY = 5;
+    static final int COLUMN_PRESSURE = 6;
+    static final int COLUMN_WIND_SPEED = 7;
+    static final int COLUMN_WIND_DEGREES = 8;
+    static final int COLUMN_WEATHER_ADD_ID = 9;
+
+// VARIABLES
+
+    private ShareActionProvider mShareActionProvider;
+    private String mForecast;
+
+    // Views
+
+    private ImageView mIconView;
+    private TextView mDateView;
+    private TextView mWeatherView;
+    private TextView mMaxView;
+    private TextView mMinView;
+    private TextView mHumidityView;
+    private TextView mWindView;
+    private TextView mPressureView;
 }

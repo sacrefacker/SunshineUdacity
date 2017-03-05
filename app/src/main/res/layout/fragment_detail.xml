@@ -12,13 +12,15 @@
         tools:context="com.example.android.sunshine.app.DetailActivity"
         tools:ignore="MergeRootFrame" >
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:padding="16dp"
-            android:minHeight="?android:attr/listPreferredItemHeightLarge" >
+            android:minHeight="?android:attr/listPreferredItemHeightLarge"
+            android:baselineAligned="false"
+            >
 
             <LinearLayout
                 android:orientation="vertical"
@@ -61,8 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/detail_icon"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_dialog_info" />
+                    android:padding="8dp" />
 
                 <TextView
                     android:layout_width="wrap_content"

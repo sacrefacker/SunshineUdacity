@@ -9,25 +9,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.al.mysunshine.data.WeatherContract;
-
 /**
  * {@link AdapterForecast} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
  */
-public class AdapterForecast extends CursorAdapter {
-
-    public static final int VIEW_TYPE_TODAY = 0;
-    public static final int VIEW_TYPE_OTHER = 1;
-
-    public static final int COLUMN_DATE = 0;
-    public static final int COLUMN_SHORT_DESC = 1;
-    public static final int COLUMN_MAX_TEMP = 2;
-    public static final int COLUMN_MIN_TEMP = 3;
+public class AdapterForecast extends CursorAdapter
+{
+// CONSTRUCTION
 
     public AdapterForecast(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
+
+// FUNCTIONS
 
     @Override
     public int getItemViewType(int position) {
@@ -39,9 +33,6 @@ public class AdapterForecast extends CursorAdapter {
         return 2;
     }
 
-    /*
-        Remember that these views are reused as needed.
-     */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // Choose the layout type
@@ -54,9 +45,6 @@ public class AdapterForecast extends CursorAdapter {
         return view;
     }
 
-    /*
-        This is where we fill-in the views with the contents of the cursor.
-     */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // our view is pretty simple here --- just a text view
@@ -81,10 +69,8 @@ public class AdapterForecast extends CursorAdapter {
 
     }
 
-    /*
-        This is ported from TaskFetchWeather --- but now we go straight from the cursor to the
-        string.
-     */
+// PRIVATE
+
     private String[] convertCursorRowToUXFormat(Cursor cursor) {
         // get row indices for our cursor
 //        int idx_date = cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
@@ -106,19 +92,32 @@ public class AdapterForecast extends CursorAdapter {
         return data;
     }
 
-    public static class ViewHolder {
-        public final ImageView iconView;
-        public final TextView forecast;
-        public final TextView date;
-        public final TextView max;
-        public final TextView min;
+// CONSTANTS
 
-        public ViewHolder(View view) {
+    private static final int VIEW_TYPE_TODAY = 0;
+    private static final int VIEW_TYPE_OTHER = 1;
+
+    private static final int COLUMN_DATE = 0;
+    private static final int COLUMN_SHORT_DESC = 1;
+    private static final int COLUMN_MAX_TEMP = 2;
+    private static final int COLUMN_MIN_TEMP = 3;
+
+// INNER TYPES
+
+    private  static class ViewHolder {
+
+        private ViewHolder(View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_icon);
             forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
             date = (TextView) view.findViewById(R.id.list_item_date_textview);
             max = (TextView) view.findViewById(R.id.list_item_high_textview);
             min = (TextView) view.findViewById(R.id.list_item_low_textview);
         }
+
+        private final ImageView iconView;
+        private final TextView forecast;
+        private final TextView date;
+        private final TextView max;
+        private final TextView min;
     }
 }

@@ -19,44 +19,9 @@ import android.widget.ListView;
 
 import com.example.al.mysunshine.data.WeatherContract;
 
-public class FragmentForecast extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = FragmentForecast.class.getSimpleName();
-    private static final int FORECAST_LOADER = 0;
-
-    private AdapterForecast mForecastAdapter;
-    private String mLocation;
-
-    // For the forecast view we're showing only a small subset of the stored data.
-    // Specify the columns we need.
-    private static final String[] FORECAST_COLUMNS = {
-        // In this case the id needs to be fully qualified with a table name, since
-        // the content provider joins the location & weather tables in the background
-        // (both have an _id column)
-        // On the one hand, that's annoying.  On the other, you can search the weather table
-        // using the location set by the user, which is only in the Location table.
-        // So the convenience is worth it.
-        WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
-        WeatherContract.WeatherEntry.COLUMN_DATE,
-        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
-        WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-        WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-        WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-        WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
-        WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-        WeatherContract.LocationEntry.COLUMN_COORD_LONG
-    };
-
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
-    // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
+public class FragmentForecast extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+{
+// LIFECYCLE
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,38 +31,10 @@ public class FragmentForecast extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        String location = Utility.getPreferredLocation(getContext());
-        if (location != null && !location.equals(mLocation)) {
-            mLocation = location;
-            updateWeatherView();
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_forecast_fragment, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                updateWeatherView();
-                return true;
-            case R.id.action_showmap:
-                showOnMap();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
-        mForecastAdapter = new AdapterForecast(getActivity(),null,0);
+        mForecastAdapter = new AdapterForecast(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
 
@@ -105,7 +42,8 @@ public class FragmentForecast extends Fragment implements LoaderManager.LoaderCa
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
 
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
@@ -130,14 +68,37 @@ public class FragmentForecast extends Fragment implements LoaderManager.LoaderCa
         super.onActivityCreated(savedInstanceState);
     }
 
-    private void fetchWeather() {
-        new TaskFetchWeather(getContext()).execute(mLocation);
+    @Override
+    public void onResume() {
+        super.onResume();
+        String location = Utility.getPreferredLocation(getContext());
+        if (location != null && !location.equals(mLocation)) {
+            mLocation = location;
+            updateWeatherView();
+        }
     }
 
-    private void updateWeatherView() {
-        fetchWeather();
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+// MENU
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_forecast_fragment, menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                updateWeatherView();
+                return true;
+            case R.id.action_showmap:
+                showOnMap();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+// LOADER
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -147,11 +108,11 @@ public class FragmentForecast extends Fragment implements LoaderManager.LoaderCa
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSetting, System.currentTimeMillis());
         return new CursorLoader(getActivity(),
-            weatherForLocationUri,
-            FORECAST_COLUMNS,
-            null,
-            null,
-            sortOrder);
+                weatherForLocationUri,
+                FORECAST_COLUMNS,
+                null,
+                null,
+                sortOrder);
     }
 
     @Override
@@ -164,10 +125,62 @@ public class FragmentForecast extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
     }
 
-    public void showOnMap() {
+    private void showOnMap() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("geo:0,0?q=".concat(mLocation)));
         Intent chooser = Intent.createChooser(intent, getString(R.string.chooser_showmap_label));
         startActivity(chooser);
     }
+
+// PRIVATE
+
+    private void fetchWeather() {
+        new TaskFetchWeather(getContext()).execute(mLocation);
+    }
+
+    private void updateWeatherView() {
+        fetchWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+// CONSTANTS
+
+    private static final String TAG = FragmentForecast.class.getSimpleName();
+    private static final int FORECAST_LOADER = 0;
+
+    // These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
+    static final int COL_WEATHER_ID = 0;
+    static final int COL_WEATHER_DATE = 1;
+    static final int COL_WEATHER_DESC = 2;
+    static final int COL_WEATHER_MAX_TEMP = 3;
+    static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_LOCATION_SETTING = 5;
+    static final int COL_WEATHER_CONDITION_ID = 6;
+    static final int COL_COORD_LAT = 7;
+    static final int COL_COORD_LONG = 8;
+
+    // For the forecast view we're showing only a small subset of the stored data.
+    // Specify the columns we need.
+    private static final String[] FORECAST_COLUMNS = {
+            // In this case the id needs to be fully qualified with a table name, since
+            // the content provider joins the location & weather tables in the background
+            // (both have an _id column)
+            // On the one hand, that's annoying.  On the other, you can search the weather table
+            // using the location set by the user, which is only in the Location table.
+            // So the convenience is worth it.
+            WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+    };
+
+// VARIABLES
+
+    private AdapterForecast mForecastAdapter;
+    private String mLocation;
 }
